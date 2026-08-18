@@ -125,6 +125,25 @@ input[type="text"], input[type="number"], select {
 
 #char-search { width: 100%; margin: 10px 0 16px; }
 
+.subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.subtab-btn {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.subtab-btn:hover { color: var(--text); border-color: var(--accent-2); }
+.subtab-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: var(--bg); font-weight: 600; }
+
 .group-header {
   font-size: 0.78rem;
   font-weight: 700;

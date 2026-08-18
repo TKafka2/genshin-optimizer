@@ -1,6 +1,8 @@
 // Genshin Optimizer — UI layer (vanilla DOM, re-renders each tab wholesale).
 let currentTab = 'characters';
 let charSearchQuery = '';
+let charElementFilter = 'All';
+let weaponTypeFilter = 'All';
 let lastWeaponAssignmentResult = null;
 
 // Placeholder icons only (no official game art — see notes elsewhere on why).
@@ -260,6 +262,7 @@ function renderCharactersTab(app) {
       <h2>My Roster</h2>
       <p class="hint">Check the characters you own. Owned characters get stat-priority sliders (0 = irrelevant, 3 = core stat) used by both optimizers, and can pick target artifact sets.</p>
       <input type="text" id="char-search" placeholder="Search characters..." value="${escapeHtml(charSearchQuery)}">
+      <div id="char-filter-tabs" class="subtabs"></div>
       <div id="char-list" class="char-list"></div>
       <details class="add-custom">
         <summary>+ Add a custom character (not in the built-in list)</summary>
@@ -297,10 +300,31 @@ function renderCharactersTab(app) {
     renderCharactersTab(app);
   });
 
+  renderCharFilterTabs();
   renderCharList();
 }
 
 const ELEMENT_ORDER = ['Pyro', 'Hydro', 'Electro', 'Cryo', 'Anemo', 'Geo', 'Dendro'];
+
+function renderCharFilterTabs() {
+  const container = document.getElementById('char-filter-tabs');
+  if (!container) return;
+  const all = Store.allCharacters();
+  const knownElements = new Set(ELEMENT_ORDER);
+  const present = ELEMENT_ORDER.filter((el) => all.some((c) => c.element === el));
+  const hasOther = all.some((c) => !knownElements.has(c.element));
+  const tabs = ['All', ...present, ...(hasOther ? ['Other'] : [])];
+  container.innerHTML = tabs.map((t) =>
+    `<button class="subtab-btn ${charElementFilter === t ? 'active' : ''}" data-element="${t}">${t === 'All' ? 'All' : (ELEMENT_ICON[t] || '') + ' ' + t}</button>`
+  ).join('');
+  container.querySelectorAll('.subtab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      charElementFilter = btn.dataset.element;
+      renderCharFilterTabs();
+      renderCharList();
+    });
+  });
+}
 
 function renderCharRow(c) {
   const entry = Store.getRosterEntry(c.id);
@@ -324,24 +348,39 @@ function renderCharList() {
   const container = document.getElementById('char-list');
   if (!container) return;
   const q = charSearchQuery.toLowerCase();
-  const filtered = Store.allCharacters().filter((c) => c.name.toLowerCase().includes(q));
+  let filtered = Store.allCharacters().filter((c) => c.name.toLowerCase().includes(q));
+  if (charElementFilter !== 'All') {
+    const knownElements = new Set(ELEMENT_ORDER);
+    filtered = charElementFilter === 'Other'
+      ? filtered.filter((c) => !knownElements.has(c.element))
+      : filtered.filter((c) => c.element === charElementFilter);
+  }
 
   if (filtered.length === 0) {
-    container.innerHTML = '<p class="hint">No characters match your search.</p>';
+    container.innerHTML = '<p class="hint">No characters match.</p>';
     return;
   }
 
+  // Owned characters first, then not-owned (sorted the same way within each bucket).
   const byRarityThenName = (a, b) => (b.rarity - a.rarity) || a.name.localeCompare(b.name);
-  const knownElements = new Set(ELEMENT_ORDER);
-  const groups = ELEMENT_ORDER.map((element) => ({
-    element,
-    chars: filtered.filter((c) => c.element === element).sort(byRarityThenName),
-  }));
-  const others = filtered.filter((c) => !knownElements.has(c.element)).sort(byRarityThenName);
-  if (others.length) groups.push({ element: 'Other', chars: others });
+  const byOwnedThenRarityThenName = (a, b) => {
+    const ownedA = Store.getRosterEntry(a.id).owned ? 1 : 0;
+    const ownedB = Store.getRosterEntry(b.id).owned ? 1 : 0;
+    return ownedB - ownedA || byRarityThenName(a, b);
+  };
 
-  container.innerHTML = groups.filter((g) => g.chars.length).map((g) => `
-    <div class="group-header">${ELEMENT_ICON[g.element] || ''} ${g.element}</div>
+  const knownElements = new Set(ELEMENT_ORDER);
+  const groupElements = charElementFilter === 'All'
+    ? [...ELEMENT_ORDER, ...(filtered.some((c) => !knownElements.has(c.element)) ? ['Other'] : [])]
+    : [charElementFilter];
+  const groups = groupElements.map((element) => ({
+    element,
+    chars: (element === 'Other' ? filtered.filter((c) => !knownElements.has(c.element)) : filtered.filter((c) => c.element === element))
+      .sort(byOwnedThenRarityThenName),
+  })).filter((g) => g.chars.length);
+
+  container.innerHTML = groups.map((g) => `
+    ${charElementFilter === 'All' ? `<div class="group-header">${ELEMENT_ICON[g.element] || ''} ${g.element}</div>` : ''}
     ${g.chars.map(renderCharRow).join('')}
   `).join('');
 
@@ -415,6 +454,7 @@ function renderWeaponsTab(app) {
         <label>Substat value<input type="number" id="wpn-substat-value" step="0.1"></label>
         <button type="submit">Add weapon</button>
       </form>
+      <div id="weapon-filter-tabs" class="subtabs"></div>
       <div id="weapon-list"></div>
     </section>
   `;
@@ -478,7 +518,25 @@ function renderWeaponsTab(app) {
     renderWeaponsTab(app);
   });
 
+  renderWeaponFilterTabs();
   renderWeaponList();
+}
+
+function renderWeaponFilterTabs() {
+  const container = document.getElementById('weapon-filter-tabs');
+  if (!container) return;
+  const present = GENSHIN_DATA.weaponTypes.filter((t) => Store.state.weapons.some((w) => w.type === t));
+  const tabs = ['All', ...present];
+  container.innerHTML = tabs.map((t) =>
+    `<button class="subtab-btn ${weaponTypeFilter === t ? 'active' : ''}" data-type="${t}">${t === 'All' ? 'All' : (WEAPON_TYPE_ICON[t] || '') + ' ' + t}</button>`
+  ).join('');
+  container.querySelectorAll('.subtab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      weaponTypeFilter = btn.dataset.type;
+      renderWeaponFilterTabs();
+      renderWeaponList();
+    });
+  });
 }
 
 function weaponRarity(w) {
@@ -508,12 +566,15 @@ function renderWeaponList() {
   if (weapons.length === 0) { container.innerHTML = '<p class="hint">No weapons added yet.</p>'; return; }
 
   const byRarityThenName = (a, b) => (weaponRarity(b) - weaponRarity(a)) || a.name.localeCompare(b.name);
-  const groups = GENSHIN_DATA.weaponTypes
+  const types = weaponTypeFilter === 'All' ? GENSHIN_DATA.weaponTypes : [weaponTypeFilter];
+  const groups = types
     .map((type) => ({ type, items: weapons.filter((w) => w.type === type).sort(byRarityThenName) }))
     .filter((g) => g.items.length);
 
+  if (groups.length === 0) { container.innerHTML = '<p class="hint">No weapons of this type yet.</p>'; return; }
+
   container.innerHTML = groups.map((g) => `
-    <div class="group-header">${WEAPON_TYPE_ICON[g.type] || ''} ${g.type}</div>
+    ${weaponTypeFilter === 'All' ? `<div class="group-header">${WEAPON_TYPE_ICON[g.type] || ''} ${g.type}</div>` : ''}
     <table class="data-table">
       <thead><tr><th>Weapon</th><th>Type</th><th>Refine</th><th>ATK</th><th>Substat</th><th>Assigned to</th><th></th></tr></thead>
       <tbody>${g.items.map(renderWeaponRow).join('')}</tbody>
