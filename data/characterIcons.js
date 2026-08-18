@@ -30,4 +30,6 @@ GENSHIN_DATA.characterIcons = {
   charlotte: 'Charlotte', dori: 'Dori', freminet: 'Freminet', heizou: 'Heizo',
   kaveh: 'Kaveh', layla: 'Layla', lynette: 'Linette', mika: 'Mika', sethos: 'Sethos',
   yaoyao: 'Yaoyao', columbina: 'Columbina', nicole: 'Nicole', prune: 'Prune',
+  keqing: 'Keqing', dehya: 'Dehya', chevreuse: 'Chevreuse', emilie: 'Emilie',
+  citlali: 'Citlali', mualani: 'Mualani', wriothesley: 'Wriothesley',
 };

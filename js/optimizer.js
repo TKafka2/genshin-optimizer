@@ -41,11 +41,20 @@ function scoreArtifact(artifact, weights) {
   return score;
 }
 
-function weaponScoreForCharacter(weapon, weights) {
+function weaponScoreForCharacter(weapon, weights, characterId) {
   let score = statScore('atkFlat', weapon.baseAtk, weights);
   score += statScore(weapon.subStat, weapon.subStatValue, weights);
   const refinement = weapon.refinement || 1;
   score *= (1 + (refinement - 1) * 0.03); // rough: each refinement ~+3% overall value
+
+  // A community-recommended weapon for this character always outranks a
+  // non-recommended one; rank within the list only breaks ties between two
+  // recommended options (refinement/level differences still matter more).
+  const list = characterId && GENSHIN_DATA.preferredWeapons ? GENSHIN_DATA.preferredWeapons[characterId] : null;
+  if (list) {
+    const idx = list.indexOf(weapon.weaponId);
+    if (idx >= 0) score += 100000 - idx * 100;
+  }
   return score;
 }
 
@@ -137,7 +146,7 @@ function computeWeaponAssignment(characters, weapons) {
 
     const matrix = chars.map((c) => {
       const weights = Store.effectivePriority(c);
-      return typeWeapons.map((w) => weaponScoreForCharacter(w, weights));
+      return typeWeapons.map((w) => weaponScoreForCharacter(w, weights, c.id));
     });
     const assign = maxWeightBipartiteMatching(matrix);
     const usedWeaponIdx = new Set();

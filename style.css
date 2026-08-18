@@ -242,6 +242,8 @@ input[type="text"], input[type="number"], select {
   padding: 1px;
 }
 
+.pref-star { color: var(--accent); }
+
 .rarity-stars { font-size: 0.72rem; letter-spacing: -1px; }
 .rarity-stars.rarity-5 { color: var(--accent); }
 .rarity-stars.rarity-4 { color: #b48ce0; }

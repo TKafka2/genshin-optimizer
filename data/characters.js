@@ -100,6 +100,15 @@ GENSHIN_DATA.characters = [
   { id: 'sethos', name: 'Sethos', element: 'Electro', weaponType: 'Bow', rarity: 4, statPriority: { atkPercent: 3, critRate: 3, critDmg: 3, er: 1, elementalDmg: 0 } },
   { id: 'yaoyao', name: 'Yaoyao', element: 'Dendro', weaponType: 'Polearm', rarity: 4, statPriority: { hpPercent: 3, healingBonus: 2, er: 1, critRate: 0, critDmg: 0 } },
 
+  // Found missing while reconciling against a real best-weapons guide (Aug 2026).
+  { id: 'keqing', name: 'Keqing', element: 'Electro', weaponType: 'Sword', rarity: 5, statPriority: { atkPercent: 3, critRate: 3, critDmg: 3, er: 1, elementalDmg: 0 } },
+  { id: 'dehya', name: 'Dehya', element: 'Pyro', weaponType: 'Claymore', rarity: 5, statPriority: { atkPercent: 2, critRate: 2, critDmg: 2, hpPercent: 1, er: 1 } },
+  { id: 'chevreuse', name: 'Chevreuse', element: 'Pyro', weaponType: 'Polearm', rarity: 4, statPriority: { hpPercent: 2, defPercent: 1, er: 2, atkPercent: 0 } },
+  { id: 'emilie', name: 'Emilie', element: 'Dendro', weaponType: 'Polearm', rarity: 5, statPriority: { em: 2, critRate: 3, critDmg: 3, atkPercent: 1, er: 0 } },
+  { id: 'citlali', name: 'Citlali', element: 'Cryo', weaponType: 'Catalyst', rarity: 5, statPriority: { hpPercent: 2, em: 1, er: 2, critRate: 0, critDmg: 0 } },
+  { id: 'mualani', name: 'Mualani', element: 'Hydro', weaponType: 'Catalyst', rarity: 5, statPriority: { hpPercent: 3, critRate: 3, critDmg: 3, er: 0, elementalDmg: 0 } },
+  { id: 'wriothesley', name: 'Wriothesley', element: 'Cryo', weaponType: 'Catalyst', rarity: 5, statPriority: { atkPercent: 3, critRate: 3, critDmg: 3, er: 1, elementalDmg: 0 } },
+
   // Nod-Krai / Luna arc additions (early-to-mid 2026).
   { id: 'columbina', name: 'Columbina', element: 'Hydro', weaponType: 'Catalyst', rarity: 5, statPriority: { hpPercent: 2, critRate: 2, critDmg: 2, er: 2, atkPercent: 0 } },
   { id: 'nicole', name: 'Nicole', element: 'Pyro', weaponType: 'Catalyst', rarity: 5, statPriority: { atkPercent: 3, er: 2, hpPercent: 0, critRate: 0, critDmg: 0 } },
