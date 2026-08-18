@@ -1,0 +1,261 @@
+// Genshin Optimizer — built-in weapon reference data.
+//
+// Names, weapon types, and rarity/secondary-stat *category* below were cross-checked
+// against https://genshin.gg/weapons/ (Aug 2026). That fixed several errors in an
+// earlier hand-typed version of this file: Aquila Favonia and Song of Broken Pines
+// actually roll Physical DMG Bonus (not ATK%); Key of Khaj-Nisut is a Catalyst (not
+// Sword); A Thousand Floating Dreams and Thrilling Tales of Dragon Slayers are a Bow
+// and a Sword respectively (not Catalyst); the weapon is "Kagura's Verity" (not
+// "Kagura's Verge"); White Iron Greatsword and Dark Iron Sword's real secondary stats
+// are DEF% and EM (not ATK%).
+//
+// Exact base ATK / secondary-stat VALUE numbers are still only rarity-tier
+// approximations (see TIER_* below) except for a couple dozen well-known weapons
+// marked "hand-verified" — the site listing didn't expose exact Level 90 numbers.
+// Edit the real numbers in when you add a weapon to your inventory.
+window.GENSHIN_DATA = window.GENSHIN_DATA || {};
+
+const TIER_BASE_ATK = { 5: 608, 4: 454, 3: 401 };
+const TIER_SUBSTAT_VALUE = {
+  5: { critRate: 33.1, critDmg: 66.2, atkPercent: 33.1, er: 55.1, em: 132.4, hpPercent: 33.1, defPercent: 41.3, physicalDmg: 33.1, atkFlat: 60, hpFlat: 900 },
+  4: { critRate: 27.6, critDmg: 55.1, atkPercent: 41.3, er: 45.9, em: 55.2, hpPercent: 41.3, defPercent: 51.7, physicalDmg: 41.3, atkFlat: 40, hpFlat: 600 },
+  3: { critRate: 31.0, critDmg: 62.0, atkPercent: 41.3, er: 45.9, em: 44.1, hpPercent: 41.3, defPercent: 51.7, physicalDmg: 41.3, atkFlat: 35, hpFlat: 500 },
+};
+function tierWeapon(id, name, type, rarity, subStat) {
+  return { id, name, type, rarity, baseAtk: TIER_BASE_ATK[rarity], subStat, subStatValue: TIER_SUBSTAT_VALUE[rarity][subStat] };
+}
+
+// --- Hand-verified (higher-confidence Level 90 numbers) ---
+const HAND_VERIFIED_WEAPONS = [
+  // Swords
+  { id: 'mistsplitter', name: "Mistsplitter's Emblem", type: 'Sword', rarity: 5, baseAtk: 674, subStat: 'critDmg', subStatValue: 44.1 },
+  { id: 'freedom_sworn', name: 'Freedom-Sworn', type: 'Sword', rarity: 5, baseAtk: 542, subStat: 'critDmg', subStatValue: 44.1 },
+  { id: 'primordial_jade_cutter', name: 'Primordial Jade Cutter', type: 'Sword', rarity: 5, baseAtk: 542, subStat: 'critRate', subStatValue: 22.1 },
+  { id: 'skyward_blade', name: 'Skyward Blade', type: 'Sword', rarity: 5, baseAtk: 674, subStat: 'er', subStatValue: 22.9 },
+  { id: 'aquila_favonia', name: 'Aquila Favonia', type: 'Sword', rarity: 5, baseAtk: 674, subStat: 'physicalDmg', subStatValue: 25.0 },
+  { id: 'summit_shaper', name: 'Summit Shaper', type: 'Sword', rarity: 5, baseAtk: 674, subStat: 'defPercent', subStatValue: 27.6 },
+  { id: 'favonius_sword', name: 'Favonius Sword', type: 'Sword', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'sacrificial_sword', name: 'Sacrificial Sword', type: 'Sword', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'the_black_sword', name: 'The Black Sword', type: 'Sword', rarity: 4, baseAtk: 454, subStat: 'critRate', subStatValue: 20.7 },
+  { id: 'iron_sting', name: 'Iron Sting', type: 'Sword', rarity: 4, baseAtk: 454, subStat: 'em', subStatValue: 55.2 },
+  { id: 'dark_iron_sword', name: 'Dark Iron Sword', type: 'Sword', rarity: 3, baseAtk: 401, subStat: 'em', subStatValue: 44.1 },
+  { id: 'thrilling_tales_of_dragon_slayers', name: 'Thrilling Tales of Dragon Slayers', type: 'Sword', rarity: 3, baseAtk: 401, subStat: 'hpPercent', subStatValue: 41.3 },
+
+  // Claymores
+  { id: 'wolfs_gravestone', name: "Wolf's Gravestone", type: 'Claymore', rarity: 5, baseAtk: 608, subStat: 'atkPercent', subStatValue: 33.1 },
+  { id: 'redhorn_stonethresher', name: 'Redhorn Stonethresher', type: 'Claymore', rarity: 5, baseAtk: 542, subStat: 'critDmg', subStatValue: 88.2 },
+  { id: 'song_of_broken_pines', name: 'Song of Broken Pines', type: 'Claymore', rarity: 5, baseAtk: 608, subStat: 'physicalDmg', subStatValue: 33.1 },
+  { id: 'skyward_pride', name: 'Skyward Pride', type: 'Claymore', rarity: 5, baseAtk: 674, subStat: 'er', subStatValue: 22.9 },
+  { id: 'serpent_spine', name: 'Serpent Spine', type: 'Claymore', rarity: 4, baseAtk: 454, subStat: 'critRate', subStatValue: 27.6 },
+  { id: 'rainslasher', name: 'Rainslasher', type: 'Claymore', rarity: 4, baseAtk: 454, subStat: 'em', subStatValue: 55.2 },
+  { id: 'favonius_greatsword', name: 'Favonius Greatsword', type: 'Claymore', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'sacrificial_greatsword', name: 'Sacrificial Greatsword', type: 'Claymore', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'white_iron_greatsword', name: 'White Iron Greatsword', type: 'Claymore', rarity: 3, baseAtk: 401, subStat: 'defPercent', subStatValue: 51.7 },
+
+  // Polearms
+  { id: 'staff_of_homa', name: 'Staff of Homa', type: 'Polearm', rarity: 5, baseAtk: 608, subStat: 'critDmg', subStatValue: 66.2 },
+  { id: 'engulfing_lightning', name: 'Engulfing Lightning', type: 'Polearm', rarity: 5, baseAtk: 608, subStat: 'er', subStatValue: 55.1 },
+  { id: 'primordial_jade_winged_spear', name: 'Primordial Jade Winged-Spear', type: 'Polearm', rarity: 5, baseAtk: 674, subStat: 'critRate', subStatValue: 22.1 },
+  { id: 'skyward_spine', name: 'Skyward Spine', type: 'Polearm', rarity: 5, baseAtk: 674, subStat: 'critRate', subStatValue: 12.4 },
+  { id: 'calamity_queller', name: 'Calamity Queller', type: 'Polearm', rarity: 5, baseAtk: 741, subStat: 'atkPercent', subStatValue: 24.0 },
+  { id: 'dragons_bane', name: "Dragon's Bane", type: 'Polearm', rarity: 4, baseAtk: 454, subStat: 'em', subStatValue: 55.2 },
+  { id: 'favonius_lance', name: 'Favonius Lance', type: 'Polearm', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'black_tassel', name: 'Black Tassel', type: 'Polearm', rarity: 3, baseAtk: 401, subStat: 'hpPercent', subStatValue: 41.3 },
+
+  // Bows
+  { id: 'thundering_pulse', name: 'Thundering Pulse', type: 'Bow', rarity: 5, baseAtk: 542, subStat: 'critDmg', subStatValue: 44.1 },
+  { id: 'amos_bow', name: "Amos' Bow", type: 'Bow', rarity: 5, baseAtk: 608, subStat: 'atkPercent', subStatValue: 33.1 },
+  { id: 'polar_star', name: 'Polar Star', type: 'Bow', rarity: 5, baseAtk: 674, subStat: 'critRate', subStatValue: 22.1 },
+  { id: 'skyward_harp', name: 'Skyward Harp', type: 'Bow', rarity: 5, baseAtk: 674, subStat: 'critRate', subStatValue: 22.1 },
+  { id: 'elegy_for_the_end', name: 'Elegy for the End', type: 'Bow', rarity: 5, baseAtk: 542, subStat: 'er', subStatValue: 30.6 },
+  { id: 'a_thousand_floating_dreams', name: 'A Thousand Floating Dreams', type: 'Bow', rarity: 5, baseAtk: 542, subStat: 'em', subStatValue: 132.4 },
+  { id: 'favonius_warbow', name: 'Favonius Warbow', type: 'Bow', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'the_stringless', name: 'The Stringless', type: 'Bow', rarity: 4, baseAtk: 454, subStat: 'em', subStatValue: 55.2 },
+  { id: 'sacrificial_bow', name: 'Sacrificial Bow', type: 'Bow', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'slingshot', name: 'Slingshot', type: 'Bow', rarity: 3, baseAtk: 401, subStat: 'critRate', subStatValue: 31.0 },
+
+  // Catalysts
+  { id: 'lost_prayer_to_the_sacred_winds', name: 'Lost Prayer to the Sacred Winds', type: 'Catalyst', rarity: 5, baseAtk: 542, subStat: 'critRate', subStatValue: 33.1 },
+  { id: 'kagura_verity', name: "Kagura's Verity", type: 'Catalyst', rarity: 5, baseAtk: 674, subStat: 'atkPercent', subStatValue: 24.0 },
+  { id: 'skyward_atlas', name: 'Skyward Atlas', type: 'Catalyst', rarity: 5, baseAtk: 674, subStat: 'atkPercent', subStatValue: 33.1 },
+  { id: 'key_of_khaj_nisut', name: 'Key of Khaj-Nisut', type: 'Catalyst', rarity: 5, baseAtk: 542, subStat: 'hpPercent', subStatValue: 41.3 },
+  { id: 'sacrificial_fragments', name: 'Sacrificial Fragments', type: 'Catalyst', rarity: 4, baseAtk: 454, subStat: 'em', subStatValue: 55.2 },
+  { id: 'favonius_codex', name: 'Favonius Codex', type: 'Catalyst', rarity: 4, baseAtk: 454, subStat: 'er', subStatValue: 45.9 },
+  { id: 'the_widsith', name: 'The Widsith', type: 'Catalyst', rarity: 4, baseAtk: 454, subStat: 'critDmg', subStatValue: 41.3 },
+  { id: 'dawning_frost', name: 'Dawning Frost', type: 'Catalyst', rarity: 4, baseAtk: 510, subStat: 'critDmg', subStatValue: 55.1 },
+];
+
+// --- Everything else on the site's list, rarity-tier approximate numbers ---
+const GENERATED_WEAPONS = [
+  // Swords
+  tierWeapon('a_teaspoon_of_transcendence', 'A Teaspoon of Transcendence', 'Sword', 5, 'critDmg'),
+  tierWeapon('absolution', 'Absolution', 'Sword', 5, 'critDmg'),
+  tierWeapon('athame_artis', 'Athame Artis', 'Sword', 5, 'critRate'),
+  tierWeapon('azurelight', 'Azurelight', 'Sword', 5, 'critRate'),
+  tierWeapon('crimson_moons_semblance', "Crimson Moon's Semblance", 'Sword', 5, 'critRate'),
+  tierWeapon('exaiphanes_blade', 'Exaiphanes Blade', 'Sword', 4, 'critRate'),
+  tierWeapon('festering_desire', 'Festering Desire', 'Sword', 4, 'er'),
+  tierWeapon('haran_geppaku_futsu', 'Haran Geppaku Futsu', 'Sword', 5, 'critRate'),
+  tierWeapon('mistsplitter_reforged', 'Mistsplitter Reforged', 'Sword', 5, 'critDmg'),
+  tierWeapon('solar_pearl', 'Solar Pearl', 'Sword', 4, 'critRate'),
+  tierWeapon('the_alley_flash', 'The Alley Flash', 'Sword', 4, 'em'),
+  tierWeapon('the_flute', 'The Flute', 'Sword', 4, 'atkFlat'),
+  tierWeapon('windblume_ode', 'Windblume Ode', 'Sword', 4, 'em'),
+  tierWeapon('cool_steel', 'Cool Steel', 'Sword', 3, 'atkPercent'),
+  tierWeapon('fillet_blade', 'Fillet Blade', 'Sword', 3, 'atkPercent'),
+  tierWeapon('harbinger_of_dawn', 'Harbinger of Dawn', 'Sword', 3, 'critDmg'),
+  tierWeapon('otherworldly_story', 'Otherworldly Story', 'Sword', 3, 'er'),
+  tierWeapon('skyrider_sword', 'Skyrider Sword', 'Sword', 3, 'er'),
+  tierWeapon('sword_of_descension', 'Sword of Descension', 'Sword', 4, 'atkPercent'),
+  tierWeapon('sword_of_narzissenkreuz', 'Sword of Narzissenkreuz', 'Sword', 4, 'atkFlat'),
+  tierWeapon('travelers_handy_sword', "Traveler's Handy Sword", 'Sword', 3, 'defPercent'),
+  tierWeapon('twin_nephrite', 'Twin Nephrite', 'Sword', 3, 'critRate'),
+
+  // Claymores
+  tierWeapon('a_thousand_blazing_suns', 'A Thousand Blazing Suns', 'Claymore', 5, 'critRate'),
+  tierWeapon('disaster_and_remorse', 'Disaster and Remorse', 'Claymore', 5, 'critRate'),
+  tierWeapon('fractured_halo', 'Fractured Halo', 'Claymore', 5, 'critDmg'),
+  tierWeapon('staff_of_the_scarlet_sands', 'Staff of the Scarlet Sands', 'Claymore', 5, 'critRate'),
+  tierWeapon('the_daybreak_chronicles', 'The Daybreak Chronicles', 'Claymore', 5, 'critDmg'),
+  tierWeapon('the_first_great_magic', 'The First Great Magic', 'Claymore', 5, 'critDmg'),
+  tierWeapon('the_unforged', 'The Unforged', 'Claymore', 5, 'atkPercent'),
+  tierWeapon('tulaytullahs_remembrance', "Tulaytullah's Remembrance", 'Claymore', 5, 'critDmg'),
+  tierWeapon('uraku_misugiri', 'Uraku Misugiri', 'Claymore', 5, 'critDmg'),
+  tierWeapon('vivid_notions', 'Vivid Notions', 'Claymore', 5, 'critDmg'),
+  tierWeapon('blackcliff_slasher', 'Blackcliff Slasher', 'Claymore', 4, 'critDmg'),
+  tierWeapon('prototype_archaic', 'Prototype Archaic', 'Claymore', 4, 'atkPercent'),
+  tierWeapon('the_viridescent_hunt', 'The Viridescent Hunt', 'Claymore', 4, 'critRate'),
+  tierWeapon('whiteblind', 'Whiteblind', 'Claymore', 4, 'defPercent'),
+  tierWeapon('bloodtainted_greatsword', 'Bloodtainted Greatsword', 'Claymore', 3, 'em'),
+  tierWeapon('debate_club', 'Debate Club', 'Claymore', 3, 'atkFlat'),
+  tierWeapon('skyrider_greatsword', 'Skyrider Greatsword', 'Claymore', 3, 'physicalDmg'),
+
+  // Polearms
+  tierWeapon('angelos_heptades', "Angelos' Heptades", 'Polearm', 5, 'atkFlat'),
+  tierWeapon('fang_of_the_mountain_king', 'Fang of the Mountain King', 'Polearm', 5, 'critRate'),
+  tierWeapon('halberd', 'Halberd', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('calamity_of_eshu', 'Calamity of Eshu', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('chain_breaker', 'Chain Breaker', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('cinnabar_spindle', 'Cinnabar Spindle', 'Polearm', 4, 'defPercent'),
+  tierWeapon('crescent_pike', 'Crescent Pike', 'Polearm', 4, 'physicalDmg'),
+  tierWeapon('deathmatch', 'Deathmatch', 'Polearm', 4, 'critRate'),
+  tierWeapon('dragonspine_spear', 'Dragonspine Spear', 'Polearm', 4, 'physicalDmg'),
+  tierWeapon('earth_shaker', 'Earth Shaker', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('finale_of_the_deep', 'Finale of the Deep', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('fleuve_cendre_ferryman', 'Fleuve Cendre Ferryman', 'Polearm', 4, 'er'),
+  tierWeapon('katsuragikiri_nagamasa', 'Katsuragikiri Nagamasa', 'Polearm', 4, 'er'),
+  tierWeapon('kitain_cross_spear', 'Kitain Cross Spear', 'Polearm', 4, 'em'),
+  tierWeapon('lithic_spear', 'Lithic Spear', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('missive_windspear', 'Missive Windspear', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('moonpiercer', 'Moonpiercer', 'Polearm', 4, 'em'),
+  tierWeapon('prototype_starglitter', 'Prototype Starglitter', 'Polearm', 4, 'er'),
+  tierWeapon('royal_spear', 'Royal Spear', 'Polearm', 4, 'atkPercent'),
+  tierWeapon('white_tassel', 'White Tassel', 'Polearm', 3, 'critRate'),
+
+  // Bows
+  tierWeapon('aqua_simulacra', 'Aqua Simulacra', 'Bow', 5, 'critDmg'),
+  tierWeapon('astral_vultures_crimson_plumage', "Astral Vulture's Crimson Plumage", 'Bow', 5, 'critDmg'),
+  tierWeapon('beacon_of_the_reed_sea', 'Beacon of the Reed Sea', 'Bow', 5, 'critRate'),
+  tierWeapon('bloodsoaked_ruins', 'Bloodsoaked Ruins', 'Bow', 5, 'critRate'),
+  tierWeapon('cranes_echoing_call', "Crane's Echoing Call", 'Bow', 5, 'atkPercent'),
+  tierWeapon('flower_wreathed_feathers', 'Flower-Wreathed Feathers', 'Bow', 5, 'atkPercent'),
+  tierWeapon('fruitful_hook', 'Fruitful Hook', 'Bow', 4, 'atkPercent'),
+  tierWeapon('hunters_path', "Hunter's Path", 'Bow', 4, 'critRate'),
+  tierWeapon('lumidouce_elegy', 'Lumidouce Elegy', 'Bow', 5, 'critRate'),
+  tierWeapon('rainbow_serpents_rain_bow', "Rainbow Serpent's Rain Bow", 'Bow', 5, 'er'),
+  tierWeapon('alley_hunter', 'Alley Hunter', 'Bow', 4, 'critRate'),
+  tierWeapon('ballad_of_the_boundless_blue', 'Ballad of the Boundless Blue', 'Bow', 4, 'er'),
+  tierWeapon('ballad_of_the_fjords', 'Ballad of the Fjords', 'Bow', 4, 'critRate'),
+  tierWeapon('blackcliff_warbow', 'Blackcliff Warbow', 'Bow', 4, 'critDmg'),
+  tierWeapon('compound_bow', 'Compound Bow', 'Bow', 4, 'physicalDmg'),
+  tierWeapon('fading_twilight', 'Fading Twilight', 'Bow', 4, 'er'),
+  tierWeapon('prototype_crescent', 'Prototype Crescent', 'Bow', 4, 'atkPercent'),
+  tierWeapon('rust', 'Rust', 'Bow', 4, 'atkFlat'),
+  tierWeapon('scion_of_the_blazing_sun', 'Scion of the Blazing Sun', 'Bow', 4, 'critRate'),
+  tierWeapon('mouuns_moon', "Mouun's Moon", 'Bow', 4, 'atkPercent'),
+  tierWeapon('wavebreakers_fin', "Wavebreaker's Fin", 'Bow', 5, 'atkFlat'),
+  tierWeapon('messenger', 'Messenger', 'Bow', 3, 'critDmg'),
+  tierWeapon('raven_bow', 'Raven Bow', 'Bow', 3, 'em'),
+  tierWeapon('recurve_bow', 'Recurve Bow', 'Bow', 3, 'hpPercent'),
+  tierWeapon('sharpshooters_oath', "Sharpshooter's Oath", 'Bow', 3, 'critDmg'),
+
+  // Catalysts
+  tierWeapon('light_of_foliar_incision', 'Light of Foliar Incision', 'Catalyst', 5, 'critDmg'),
+  tierWeapon('lightbearing_moonshard', 'Lightbearing Moonshard', 'Catalyst', 5, 'critDmg'),
+  tierWeapon('memory_of_dust', 'Memory of Dust', 'Catalyst', 5, 'atkPercent'),
+  tierWeapon('nightweavers_looking_glass', "Nightweaver's Looking Glass", 'Catalyst', 5, 'em'),
+  tierWeapon('nocturnes_curtain_call', "Nocturne's Curtain Call", 'Catalyst', 5, 'critDmg'),
+  tierWeapon('peak_patrol_song', 'Peak Patrol Song', 'Catalyst', 5, 'defPercent'),
+  tierWeapon('reliquary_of_truth', 'Reliquary of Truth', 'Catalyst', 5, 'critDmg'),
+  tierWeapon('silvershower_heartstrings', 'Silvershower Heartstrings', 'Catalyst', 5, 'hpFlat'),
+  tierWeapon('splendor_of_tranquil_waters', 'Splendor of Tranquil Waters', 'Catalyst', 5, 'critDmg'),
+  tierWeapon('starcallers_watch', "Starcaller's Watch", 'Catalyst', 5, 'em'),
+  tierWeapon('sunny_morning_sleep_in', 'Sunny Morning Sleep-In', 'Catalyst', 5, 'em'),
+  tierWeapon('surfs_up', "Surf's Up", 'Catalyst', 5, 'critDmg'),
+  tierWeapon('symphonist_of_scents', 'Symphonist of Scents', 'Catalyst', 5, 'critDmg'),
+  tierWeapon('tome_of_the_eternal_flow', 'Tome of the Eternal Flow', 'Catalyst', 5, 'critDmg'),
+  tierWeapon('vortex_vanquisher', 'Vortex Vanquisher', 'Catalyst', 5, 'atkPercent'),
+  tierWeapon('blackmarrow_lantern', 'Blackmarrow Lantern', 'Catalyst', 4, 'em'),
+  tierWeapon('blackcliff_agate', 'Blackcliff Agate', 'Catalyst', 4, 'critDmg'),
+  tierWeapon('cloudforged', 'Cloudforged', 'Catalyst', 4, 'em'),
+  tierWeapon('dodoco_tales', 'Dodoco Tales', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('end_of_the_line', 'End of the Line', 'Catalyst', 4, 'er'),
+  tierWeapon('etherlight_spindlelute', 'Etherlight Spindlelute', 'Catalyst', 4, 'er'),
+  tierWeapon('eye_of_perception', 'Eye of Perception', 'Catalyst', 4, 'atkFlat'),
+  tierWeapon('flame_forged_insight', 'Flame-Forged Insight', 'Catalyst', 4, 'em'),
+  tierWeapon('flute_of_ezpitzal', 'Flute of Ezpitzal', 'Catalyst', 4, 'defPercent'),
+  tierWeapon('forest_regalia', 'Forest Regalia', 'Catalyst', 4, 'er'),
+  tierWeapon('forged_by_the_golden_melody', 'Forged by the Golden Melody', 'Catalyst', 4, 'critRate'),
+  tierWeapon('frostbearer', 'Frostbearer', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('frostbreath', 'Frostbreath', 'Catalyst', 4, 'er'),
+  tierWeapon('fruit_of_fulfillment', 'Fruit of Fulfillment', 'Catalyst', 4, 'er'),
+  tierWeapon('hakushin_ring', 'Hakushin Ring', 'Catalyst', 4, 'er'),
+  tierWeapon('jade_vista', 'Jade Vista', 'Catalyst', 4, 'critRate'),
+  tierWeapon('kings_squire', "King's Squire", 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('mailed_flower', 'Mailed Flower', 'Catalyst', 4, 'em'),
+  tierWeapon('makhaira_aquamarine', 'Makhaira Aquamarine', 'Catalyst', 4, 'em'),
+  tierWeapon('mappa_mare', 'Mappa Mare', 'Catalyst', 4, 'em'),
+  tierWeapon('master_key', 'Master Key', 'Catalyst', 4, 'er'),
+  tierWeapon('prototype_amber', 'Prototype Amber', 'Catalyst', 4, 'hpPercent'),
+  tierWeapon('royal_grimoire', 'Royal Grimoire', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('sapwood_blade', 'Sapwood Blade', 'Catalyst', 4, 'er'),
+  tierWeapon('serenitys_call', "Serenity's Call", 'Catalyst', 4, 'er'),
+  tierWeapon('snare_hook', 'Snare Hook', 'Catalyst', 4, 'er'),
+  tierWeapon('song_of_stillness', 'Song of Stillness', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('song_of_the_vigil', 'Song of the Vigil', 'Catalyst', 4, 'em'),
+  tierWeapon('tidal_shadow', 'Tidal Shadow', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('the_bell', 'The Bell', 'Catalyst', 4, 'hpPercent'),
+  tierWeapon('the_catch', 'The Catch', 'Catalyst', 4, 'er'),
+  tierWeapon('ultimate_overlords_mega_magic_sword', "Ultimate Overlord's Mega Magic Sword", 'Catalyst', 4, 'er'),
+  tierWeapon('wandering_evenstar', 'Wandering Evenstar', 'Catalyst', 4, 'em'),
+  tierWeapon('waveriding_whirl', 'Waveriding Whirl', 'Catalyst', 4, 'er'),
+  tierWeapon('xiphos_moonlight', "Xiphos' Moonlight", 'Catalyst', 4, 'em'),
+  tierWeapon('emerald_orb', 'Emerald Orb', 'Catalyst', 3, 'em'),
+  tierWeapon('magic_guide', 'Magic Guide', 'Catalyst', 3, 'em'),
+
+  // Found missing while reconciling against a real inventory import (Aug 2026).
+  tierWeapon('lions_roar', "Lion's Roar", 'Sword', 4, 'atkPercent'),
+  tierWeapon('prototype_rancour', 'Prototype Rancour', 'Sword', 4, 'atkPercent'),
+  tierWeapon('the_dockhands_assistant', "The Dockhand's Assistant", 'Sword', 4, 'hpPercent'),
+  tierWeapon('kagotsurube_isshin', 'Kagotsurube Isshin', 'Sword', 4, 'critDmg'),
+  tierWeapon('blackcliff_longsword', 'Blackcliff Longsword', 'Sword', 4, 'critDmg'),
+  tierWeapon('toukabou_shigure', 'Toukabou Shigure', 'Sword', 4, 'em'),
+  tierWeapon('blackcliff_pole', 'Blackcliff Pole', 'Polearm', 4, 'critDmg'),
+  tierWeapon('sacrificial_jade', 'Sacrificial Jade', 'Catalyst', 4, 'er'),
+  tierWeapon('wine_and_song', 'Wine and Song', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('luxurious_sea_lord', 'Luxurious Sea Lord', 'Claymore', 4, 'hpPercent'),
+  tierWeapon('snow_tombed_starsilver', 'Snow-Tombed Starsilver', 'Claymore', 4, 'physicalDmg'),
+  tierWeapon('portable_power_saw', 'Portable Power Saw', 'Claymore', 4, 'defPercent'),
+  tierWeapon('lithic_blade', 'Lithic Blade', 'Claymore', 4, 'atkPercent'),
+  tierWeapon('ibis_piercer', 'Ibis Piercer', 'Bow', 4, 'critRate'),
+
+  // Confirmed real via direct lookup after being wrongly flagged as unverifiable.
+  tierWeapon('golden_frostbound_oath', 'Golden Frostbound Oath', 'Bow', 5, 'critDmg'),
+  tierWeapon('everlasting_moonglow', 'Everlasting Moonglow', 'Catalyst', 5, 'er'),
+  tierWeapon('moonweavers_dawn', "Moonweaver's Dawn", 'Sword', 4, 'critRate'),
+  tierWeapon('oathsworn_eye', 'Oathsworn Eye', 'Catalyst', 4, 'atkPercent'),
+  tierWeapon('ferrous_shadow', 'Ferrous Shadow', 'Claymore', 3, 'hpPercent'),
+];
+
+GENSHIN_DATA.weapons = HAND_VERIFIED_WEAPONS.concat(GENERATED_WEAPONS);
+GENSHIN_DATA.weaponTypes = ['Sword', 'Claymore', 'Polearm', 'Bow', 'Catalyst'];

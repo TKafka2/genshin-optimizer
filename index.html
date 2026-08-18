@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genshin Optimizer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Genshin Optimizer</h1>
+  <div class="topbar-actions">
+    <button id="export-btn" title="Download your data as a backup file">Export</button>
+    <label class="file-btn">Import<input type="file" id="import-input" accept=".json,application/json" hidden></label>
+    <button id="reset-btn" class="danger-btn" title="Erase all saved data">Reset</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn" data-tab="characters">My Characters</button>
+  <button class="tab-btn" data-tab="weapons">My Weapons</button>
+  <button class="tab-btn" data-tab="artifacts">My Artifacts</button>
+  <button class="tab-btn" data-tab="weaponOptimizer">Weapon Optimizer</button>
+  <button class="tab-btn" data-tab="artifactOptimizer">Artifact Optimizer</button>
+</nav>
+
+<main id="app"></main>
+
+<footer class="foot-note">
+  Everything is stored locally in this browser (localStorage) — nothing is uploaded anywhere. Stat scoring uses
+  community rule-of-thumb weights, not a full rotation damage simulation. Use Export occasionally to back up your data.
+</footer>
+
+<script src="data/characters.js"></script>
+<script src="data/weapons.js"></script>
+<script src="data/artifactSets.js"></script>
+<script src="data/stats.js"></script>
+<script src="js/store.js"></script>
+<script src="js/optimizer.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
