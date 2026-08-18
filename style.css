@@ -31,6 +31,25 @@
 .cloud-sync-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
 .cloud-sync-row input[type="password"] { flex: 1; min-width: 240px; }
 
+.sync-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--panel-2);
+  border: 1px solid var(--accent-2);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  z-index: 1000;
+  animation: sync-toast-in 0.2s ease-out;
+}
+@keyframes sync-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

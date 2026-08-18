@@ -11,6 +11,11 @@ const CloudSync = {
   GIST_ID_KEY: 'genshin-optimizer-gist-id',
   GIST_DESCRIPTION: 'genshin-optimizer-sync-data (do not rename/delete — used by the Genshin Optimizer app)',
   GIST_FILENAME: 'genshin-optimizer-data.json',
+  AUTO_PUSH_DELAY_MS: 4000,
+  _pushTimer: null,
+  // Optional (msg, isError) => void hook set by app.js so the UI can reflect
+  // background sync activity without cloudSync.js touching the DOM directly.
+  onStatus: null,
 
   getPat() {
     return localStorage.getItem(this.PAT_KEY) || '';
@@ -85,5 +90,38 @@ const CloudSync = {
     const file = gist.files[this.GIST_FILENAME];
     if (!file) throw new Error('Cloud gist exists but is missing the expected data file.');
     return file.content;
+  },
+
+  // Debounced background push — call this after every local change. Waits for
+  // a quiet period so a burst of edits (e.g. dragging a slider) becomes one
+  // API call instead of dozens.
+  scheduleAutoPush() {
+    if (!this.getPat()) return;
+    clearTimeout(this._pushTimer);
+    this._pushTimer = setTimeout(() => {
+      this.push()
+        .then(() => this.onStatus && this.onStatus('Auto-synced to cloud just now.'))
+        .catch((err) => this.onStatus && this.onStatus('Auto-sync failed: ' + err.message, true));
+    }, this.AUTO_PUSH_DELAY_MS);
+  },
+
+  // Called once on startup: if the cloud copy is strictly newer than this
+  // device's local copy, pull it in. Last-write-wins — if you edit the same
+  // data on two devices before either syncs, whichever pushes last wins and
+  // the other device's un-pushed edit is silently lost. Fine for one person
+  // switching between their own devices, not a real multi-writer sync.
+  async autoPullIfNewer() {
+    if (!this.getPat()) return false;
+    try {
+      const content = await this.pull();
+      const remote = JSON.parse(content);
+      if ((remote.lastModified || 0) > (Store.state.lastModified || 0)) {
+        Store.importJson(content);
+        return true;
+      }
+    } catch (err) {
+      console.warn('Cloud auto-pull skipped:', err.message);
+    }
+    return false;
   },
 };

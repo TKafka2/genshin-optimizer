@@ -8,11 +8,14 @@ function defaultState() {
     customCharacters: [], // same shape as GENSHIN_DATA.characters entries
     weapons: [],        // { instanceId, weaponId, name, type, refinement, level, baseAtk, subStat, subStatValue, assignedTo }
     artifacts: [],       // { instanceId, setId, slot, rarity, level, mainStat, mainStatValue, substats: [{type, value}] }
+    lastModified: 0,     // epoch ms — used by Cloud Sync to tell which of two devices' data is newer
   };
 }
 
 const Store = {
   state: null,
+  // Set by app.js to schedule a debounced Cloud Sync push after any change.
+  _onSaveHook: null,
 
   // Detects a browser/mode that silently discards localStorage (private
   // browsing, "clear on close" settings, storage blocked for file:// pages).
@@ -71,7 +74,9 @@ const Store = {
   },
 
   save() {
+    this.state.lastModified = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+    if (this._onSaveHook) this._onSaveHook();
   },
 
   exportJson() {

@@ -167,6 +167,27 @@ function init() {
   document.getElementById('reset-btn').addEventListener('click', doReset);
   initCloudSyncUi();
   switchTab('characters');
+
+  // Background auto-sync: any local change schedules a debounced push; on
+  // startup, pull down whichever device's data is newer.
+  Store._onSaveHook = () => CloudSync.scheduleAutoPush();
+  if (CloudSync.getPat()) {
+    CloudSync.autoPullIfNewer().then((pulled) => {
+      if (pulled) {
+        lastWeaponAssignmentResult = null;
+        renderTab();
+        showToast('Synced newer data from the cloud.');
+      }
+    });
+  }
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'sync-toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
 }
 
 function initCloudSyncUi() {
@@ -176,10 +197,11 @@ function initCloudSyncUi() {
     statusEl.textContent = msg;
     statusEl.style.color = isError ? 'var(--danger)' : '';
   };
+  CloudSync.onStatus = setStatus;
 
   document.getElementById('cloud-sync-btn').addEventListener('click', () => {
     panel.hidden = !panel.hidden;
-    if (!panel.hidden) setStatus(CloudSync.getPat() ? 'Token saved on this device.' : 'No token saved on this device yet.');
+    if (!panel.hidden) setStatus(CloudSync.getPat() ? 'Token saved on this device — changes auto-sync in the background a few seconds after you make them.' : 'No token saved on this device yet.');
   });
 
   document.getElementById('cloud-pat-save-btn').addEventListener('click', () => {
@@ -188,14 +210,17 @@ function initCloudSyncUi() {
     if (!pat) { setStatus('Enter a token first.', true); return; }
     CloudSync.setPat(pat);
     input.value = '';
-    setStatus('Token saved on this device.');
+    setStatus('Token saved — changes on this device will now auto-sync in the background.');
+    CloudSync.autoPullIfNewer().then((pulled) => {
+      if (pulled) { lastWeaponAssignmentResult = null; renderTab(); setStatus('Pulled newer cloud data into this device.'); }
+    });
   });
 
   document.getElementById('cloud-push-btn').addEventListener('click', async () => {
     setStatus('Pushing…');
     try {
       await CloudSync.push();
-      setStatus('Pushed. This device\'s data is now the cloud copy — pull it on your other device(s).');
+      setStatus('Pushed. This device\'s data is now the cloud copy.');
     } catch (err) {
       setStatus(err.message, true);
     }

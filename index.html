@@ -19,19 +19,22 @@
 
 <div id="cloud-sync-panel" class="cloud-sync-panel" hidden>
   <p class="hint">
-    Stores your data in a private (unlisted) GitHub Gist on your own account, so you can pull it down on another device.
-    Create a token at <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) →
-    Generate new token</strong>, check only the <strong>gist</strong> scope, then paste it below. The token is saved only
-    in this browser's local storage and is sent only to api.github.com — it's never included in Export files or committed
-    anywhere.
+    Stores your data in a private (unlisted) GitHub Gist on your own account. Once a token is saved on a device, that
+    device auto-syncs in the background: any change pushes to the cloud a few seconds later, and opening the app pulls
+    down the cloud copy if it's newer than what's local. Create a token at <strong>github.com → Settings → Developer
+    settings → Personal access tokens → Tokens (classic) → Generate new token</strong>, check only the
+    <strong>gist</strong> scope, then paste it below — once per device. The token is saved only in this browser's local
+    storage and is sent only to api.github.com — it's never included in Export files or committed anywhere. Note: if you
+    edit on two devices before either syncs, whichever pushes last wins (no merge) — use the manual buttons below to
+    force a sync if you want to be sure before switching devices.
   </p>
   <div class="cloud-sync-row">
     <input type="password" id="cloud-pat-input" placeholder="GitHub personal access token (gist scope)">
     <button id="cloud-pat-save-btn">Save token</button>
   </div>
   <div class="cloud-sync-row">
-    <button id="cloud-push-btn">⬆ Push this device's data to cloud</button>
-    <button id="cloud-pull-btn">⬇ Pull cloud data to this device</button>
+    <button id="cloud-push-btn">⬆ Force push now</button>
+    <button id="cloud-pull-btn">⬇ Force pull now</button>
   </div>
   <p id="cloud-sync-status" class="hint"></p>
 </div>
