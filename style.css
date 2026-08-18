@@ -199,6 +199,36 @@ input[type="text"], input[type="number"], select {
   border-top: 1px dashed var(--border);
 }
 
+.char-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.char-avatar.avatar-sm { width: 20px; height: 20px; font-size: 0.6rem; }
+
+.avatar-pyro { background: #c9573f; }
+.avatar-hydro { background: #3f7fb3; }
+.avatar-electro { background: #7a56b3; }
+.avatar-cryo { background: #4aa7c0; }
+.avatar-anemo { background: #3fa384; }
+.avatar-geo { background: #b3892f; }
+.avatar-dendro { background: #6a9c3a; }
+
+.icon-tag { display: inline-block; }
+
+.rarity-stars { font-size: 0.72rem; letter-spacing: -1px; }
+.rarity-stars.rarity-5 { color: var(--accent); }
+.rarity-stars.rarity-4 { color: #b48ce0; }
+.rarity-stars.rarity-3 { color: #8fb0d9; }
+
 .priority-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
