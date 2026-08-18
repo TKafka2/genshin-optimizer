@@ -49,6 +49,21 @@ const Store = {
     if (!Array.isArray(this.state.artifacts)) { this.state.artifacts = d.artifacts; dirty = true; }
     if (!Array.isArray(this.state.customCharacters)) { this.state.customCharacters = d.customCharacters; dirty = true; }
     if (!this.state.roster || typeof this.state.roster !== 'object' || Array.isArray(this.state.roster)) { this.state.roster = d.roster; dirty = true; }
+    // Re-sync catalog weapons (weaponId set, i.e. not a custom entry) against the current
+    // reference data, so corrections to data/weapons.js (e.g. a fixed weapon type) reach
+    // gear you already added, not just new additions.
+    if (Array.isArray(this.state.weapons) && typeof GENSHIN_DATA !== 'undefined') {
+      this.state.weapons.forEach((w) => {
+        if (!w.weaponId) return;
+        const def = GENSHIN_DATA.weapons.find((x) => x.id === w.weaponId);
+        if (!def) return;
+        if (w.type !== def.type || w.subStat !== def.subStat) {
+          w.type = def.type;
+          w.subStat = def.subStat;
+          dirty = true;
+        }
+      });
+    }
     if (dirty) {
       console.warn('Repaired corrupted saved data (some fields were reset to empty).');
       this.save();
