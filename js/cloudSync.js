@@ -119,8 +119,10 @@ const CloudSync = {
         Store.importJson(content);
         return true;
       }
+      this.onStatus && this.onStatus('Checked cloud on load — this device already has the latest data.');
     } catch (err) {
       console.warn('Cloud auto-pull skipped:', err.message);
+      this.onStatus && this.onStatus('Auto-pull on load failed: ' + err.message, true);
     }
     return false;
   },
