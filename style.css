@@ -125,6 +125,18 @@ input[type="text"], input[type="number"], select {
 
 #char-search { width: 100%; margin: 10px 0 16px; }
 
+.group-header {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin: 18px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.group-header:first-child { margin-top: 6px; }
+
 .inline-form, .artifact-form {
   display: flex;
   flex-wrap: wrap;

@@ -300,29 +300,50 @@ function renderCharactersTab(app) {
   renderCharList();
 }
 
+const ELEMENT_ORDER = ['Pyro', 'Hydro', 'Electro', 'Cryo', 'Anemo', 'Geo', 'Dendro'];
+
+function renderCharRow(c) {
+  const entry = Store.getRosterEntry(c.id);
+  return `
+    <div class="char-row">
+      <label class="char-row-main">
+        <input type="checkbox" class="own-check" data-id="${c.id}" ${entry.owned ? 'checked' : ''}>
+        ${avatarHtml(c)}
+        <span class="char-name">${escapeHtml(c.name)}</span>
+        <span class="rarity-stars rarity-${c.rarity}">${'★'.repeat(c.rarity)}</span>
+        ${entry.owned && (entry.constellation || entry.level != null) ? `<span class="badge">${escapeHtml([entry.constellation, entry.level != null ? 'Lv ' + entry.level : ''].filter(Boolean).join(' · '))}</span>` : ''}
+        <span class="badge badge-${c.element.toLowerCase()}">${ELEMENT_ICON[c.element] || ''} ${c.element}</span>
+        <span class="badge">${WEAPON_TYPE_ICON[c.weaponType] || ''} ${c.weaponType}</span>
+      </label>
+      ${entry.owned ? renderCharDetail(c, entry) : ''}
+    </div>
+  `;
+}
+
 function renderCharList() {
   const container = document.getElementById('char-list');
   if (!container) return;
-  const all = Store.allCharacters().slice().sort((a, b) => a.name.localeCompare(b.name));
   const q = charSearchQuery.toLowerCase();
-  const filtered = all.filter((c) => c.name.toLowerCase().includes(q));
+  const filtered = Store.allCharacters().filter((c) => c.name.toLowerCase().includes(q));
 
-  container.innerHTML = filtered.map((c) => {
-    const entry = Store.getRosterEntry(c.id);
-    return `
-      <div class="char-row">
-        <label class="char-row-main">
-          <input type="checkbox" class="own-check" data-id="${c.id}" ${entry.owned ? 'checked' : ''}>
-          ${avatarHtml(c)}
-          <span class="char-name">${escapeHtml(c.name)}</span>
-          ${entry.owned && (entry.constellation || entry.level != null) ? `<span class="badge">${escapeHtml([entry.constellation, entry.level != null ? 'Lv ' + entry.level : ''].filter(Boolean).join(' · '))}</span>` : ''}
-          <span class="badge badge-${c.element.toLowerCase()}">${ELEMENT_ICON[c.element] || ''} ${c.element}</span>
-          <span class="badge">${WEAPON_TYPE_ICON[c.weaponType] || ''} ${c.weaponType}</span>
-        </label>
-        ${entry.owned ? renderCharDetail(c, entry) : ''}
-      </div>
-    `;
-  }).join('') || '<p class="hint">No characters match your search.</p>';
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="hint">No characters match your search.</p>';
+    return;
+  }
+
+  const byRarityThenName = (a, b) => (b.rarity - a.rarity) || a.name.localeCompare(b.name);
+  const knownElements = new Set(ELEMENT_ORDER);
+  const groups = ELEMENT_ORDER.map((element) => ({
+    element,
+    chars: filtered.filter((c) => c.element === element).sort(byRarityThenName),
+  }));
+  const others = filtered.filter((c) => !knownElements.has(c.element)).sort(byRarityThenName);
+  if (others.length) groups.push({ element: 'Other', chars: others });
+
+  container.innerHTML = groups.filter((g) => g.chars.length).map((g) => `
+    <div class="group-header">${ELEMENT_ICON[g.element] || ''} ${g.element}</div>
+    ${g.chars.map(renderCharRow).join('')}
+  `).join('');
 
   container.querySelectorAll('.own-check').forEach((cb) => {
     cb.addEventListener('change', (e) => {
@@ -460,32 +481,45 @@ function renderWeaponsTab(app) {
   renderWeaponList();
 }
 
+function weaponRarity(w) {
+  const def = w.weaponId ? GENSHIN_DATA.weapons.find((x) => x.id === w.weaponId) : null;
+  return def ? def.rarity : 0;
+}
+
+function renderWeaponRow(w) {
+  const assignedChar = w.assignedTo ? Store.getCharacter(w.assignedTo) : null;
+  const rarity = weaponRarity(w);
+  const stars = rarity ? '★'.repeat(rarity) : '';
+  return `<tr>
+    <td>${weaponIconHtml(w)} ${escapeHtml(w.name)}${stars ? ` <span class="rarity-stars rarity-${rarity}">${stars}</span>` : ''}</td>
+    <td>${WEAPON_TYPE_ICON[w.type] || ''} ${w.type}</td>
+    <td>R${w.refinement}</td>
+    <td>${w.baseAtk}</td>
+    <td>${GENSHIN_DATA.statLabels[w.subStat] || w.subStat}: ${w.subStatValue}</td>
+    <td>${assignedChar ? `${avatarHtml(assignedChar, 'avatar-sm')} ${escapeHtml(assignedChar.name)}` : '—'}</td>
+    <td><button class="danger-btn" data-id="${w.instanceId}">Remove</button></td>
+  </tr>`;
+}
+
 function renderWeaponList() {
   const container = document.getElementById('weapon-list');
   if (!container) return;
   const weapons = Store.state.weapons;
   if (weapons.length === 0) { container.innerHTML = '<p class="hint">No weapons added yet.</p>'; return; }
-  container.innerHTML = `
+
+  const byRarityThenName = (a, b) => (weaponRarity(b) - weaponRarity(a)) || a.name.localeCompare(b.name);
+  const groups = GENSHIN_DATA.weaponTypes
+    .map((type) => ({ type, items: weapons.filter((w) => w.type === type).sort(byRarityThenName) }))
+    .filter((g) => g.items.length);
+
+  container.innerHTML = groups.map((g) => `
+    <div class="group-header">${WEAPON_TYPE_ICON[g.type] || ''} ${g.type}</div>
     <table class="data-table">
       <thead><tr><th>Weapon</th><th>Type</th><th>Refine</th><th>ATK</th><th>Substat</th><th>Assigned to</th><th></th></tr></thead>
-      <tbody>
-        ${weapons.map((w) => {
-          const assignedChar = w.assignedTo ? Store.getCharacter(w.assignedTo) : null;
-          const def = w.weaponId ? GENSHIN_DATA.weapons.find((x) => x.id === w.weaponId) : null;
-          const stars = def ? '★'.repeat(def.rarity) : '';
-          return `<tr>
-            <td>${weaponIconHtml(w)} ${escapeHtml(w.name)}${stars ? ` <span class="rarity-stars rarity-${def.rarity}">${stars}</span>` : ''}</td>
-            <td>${WEAPON_TYPE_ICON[w.type] || ''} ${w.type}</td>
-            <td>R${w.refinement}</td>
-            <td>${w.baseAtk}</td>
-            <td>${GENSHIN_DATA.statLabels[w.subStat] || w.subStat}: ${w.subStatValue}</td>
-            <td>${assignedChar ? `${avatarHtml(assignedChar, 'avatar-sm')} ${escapeHtml(assignedChar.name)}` : '—'}</td>
-            <td><button class="danger-btn" data-id="${w.instanceId}">Remove</button></td>
-          </tr>`;
-        }).join('')}
-      </tbody>
+      <tbody>${g.items.map(renderWeaponRow).join('')}</tbody>
     </table>
-  `;
+  `).join('');
+
   container.querySelectorAll('.danger-btn').forEach((btn) => {
     btn.addEventListener('click', () => { Store.removeWeapon(btn.dataset.id); renderWeaponList(); });
   });
