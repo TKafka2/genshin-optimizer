@@ -648,10 +648,10 @@ function renderWeaponList() {
 
   container.innerHTML = groups.map((g) => `
     ${weaponTypeFilter === 'All' ? `<div class="group-header">${WEAPON_TYPE_ICON[g.type] || ''} ${g.type}</div>` : ''}
-    <table class="data-table">
+    <div class="table-scroll"><table class="data-table">
       <thead><tr><th>Weapon</th><th>Type</th><th>Refine</th><th>ATK</th><th>Substat</th><th>Assigned to</th><th></th></tr></thead>
       <tbody>${g.items.map(renderWeaponRow).join('')}</tbody>
-    </table>
+    </table></div>
   `).join('');
 
   container.querySelectorAll('.danger-btn').forEach((btn) => {
@@ -749,7 +749,7 @@ function renderArtifactList() {
   if (artifacts.length === 0) { container.innerHTML = '<p class="hint">No artifacts added yet.</p>'; return; }
   const ownedChars = Store.ownedCharacters();
   container.innerHTML = `
-    <table class="data-table">
+    <div class="table-scroll"><table class="data-table">
       <thead><tr><th>Set</th><th>Slot</th><th>Main</th><th>Substats</th><th>Reserved for</th><th></th></tr></thead>
       <tbody>
         ${artifacts.map((a) => {
@@ -771,7 +771,7 @@ function renderArtifactList() {
           </tr>`;
         }).join('')}
       </tbody>
-    </table>
+    </table></div>
   `;
   container.querySelectorAll('.danger-btn').forEach((btn) => {
     btn.addEventListener('click', () => { Store.removeArtifact(btn.dataset.id); renderArtifactList(); });
@@ -808,7 +808,7 @@ function renderWeaponOptResult() {
   const sorted = assignments.slice().sort((a, b) => b.score - a.score);
   container.innerHTML = `
     <h3>Recommended assignments</h3>
-    ${sorted.length ? `<table class="data-table">
+    ${sorted.length ? `<div class="table-scroll"><table class="data-table">
       <thead><tr><th>Character</th><th>Weapon</th><th>Refine</th><th>Score</th><th></th></tr></thead>
       <tbody>${sorted.map((a) => `
         <tr>
@@ -819,7 +819,7 @@ function renderWeaponOptResult() {
           <td><button class="save-assign-btn" data-char="${a.character.id}" data-weapon="${a.weapon.instanceId}">Save</button></td>
         </tr>
       `).join('')}</tbody>
-    </table>` : '<p class="hint">No matches yet — you need owned characters and weapons of the same type.</p>'}
+    </table></div>` : '<p class="hint">No matches yet — you need owned characters and weapons of the same type.</p>'}
     ${unassignedCharacters.length ? `<h3>Owned characters with no matching weapon in inventory</h3>
       <p>${unassignedCharacters.map((c) => escapeHtml(c.name)).join(', ')}</p>` : ''}
     ${leftoverWeapons.length ? `<h3>Unused weapons of matching types</h3>
@@ -889,10 +889,10 @@ function renderArtifactOptResult(character, result) {
   container.innerHTML = `
     <h3>${avatarHtml(character, 'avatar-sm')} Best build for ${escapeHtml(character.name)}</h3>
     <p class="set-bonus-label">${escapeHtml(best.setBonus)} — total score ${best.total.toFixed(1)}</p>
-    <table class="data-table">
+    <div class="table-scroll"><table class="data-table">
       <thead><tr><th>Slot</th><th>Set</th><th>Main stat</th><th>Substats</th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>
+    </table></div>
     ${runnerUps.length ? `<h4>Other options considered</h4>
       <ul>${runnerUps.map((r) => `<li>${escapeHtml(r.setBonus)} — score ${r.total.toFixed(1)}</li>`).join('')}</ul>` : ''}
   `;
