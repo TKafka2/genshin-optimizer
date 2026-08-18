@@ -22,6 +22,15 @@
   text-align: center;
 }
 
+.cloud-sync-panel {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+}
+.cloud-sync-panel .hint { max-width: 760px; }
+.cloud-sync-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.cloud-sync-row input[type="password"] { flex: 1; min-width: 240px; }
+
 body {
   margin: 0;
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

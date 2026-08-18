@@ -165,7 +165,55 @@ function init() {
   document.getElementById('export-btn').addEventListener('click', doExport);
   document.getElementById('import-input').addEventListener('change', doImport);
   document.getElementById('reset-btn').addEventListener('click', doReset);
+  initCloudSyncUi();
   switchTab('characters');
+}
+
+function initCloudSyncUi() {
+  const panel = document.getElementById('cloud-sync-panel');
+  const statusEl = document.getElementById('cloud-sync-status');
+  const setStatus = (msg, isError) => {
+    statusEl.textContent = msg;
+    statusEl.style.color = isError ? 'var(--danger)' : '';
+  };
+
+  document.getElementById('cloud-sync-btn').addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) setStatus(CloudSync.getPat() ? 'Token saved on this device.' : 'No token saved on this device yet.');
+  });
+
+  document.getElementById('cloud-pat-save-btn').addEventListener('click', () => {
+    const input = document.getElementById('cloud-pat-input');
+    const pat = input.value.trim();
+    if (!pat) { setStatus('Enter a token first.', true); return; }
+    CloudSync.setPat(pat);
+    input.value = '';
+    setStatus('Token saved on this device.');
+  });
+
+  document.getElementById('cloud-push-btn').addEventListener('click', async () => {
+    setStatus('Pushing…');
+    try {
+      await CloudSync.push();
+      setStatus('Pushed. This device\'s data is now the cloud copy — pull it on your other device(s).');
+    } catch (err) {
+      setStatus(err.message, true);
+    }
+  });
+
+  document.getElementById('cloud-pull-btn').addEventListener('click', async () => {
+    if (!confirm('This replaces everything currently saved on this device with the cloud copy. Continue?')) return;
+    setStatus('Pulling…');
+    try {
+      const content = await CloudSync.pull();
+      Store.importJson(content);
+      lastWeaponAssignmentResult = null;
+      renderTab();
+      setStatus('Pulled cloud data into this device.');
+    } catch (err) {
+      setStatus(err.message, true);
+    }
+  });
 }
 
 function switchTab(tab) {
