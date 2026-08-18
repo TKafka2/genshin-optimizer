@@ -224,6 +224,24 @@ input[type="text"], input[type="number"], select {
 
 .icon-tag { display: inline-block; }
 
+.char-avatar-img {
+  object-fit: cover;
+  object-position: top center;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+}
+
+.weapon-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px;
+}
+
 .rarity-stars { font-size: 0.72rem; letter-spacing: -1px; }
 .rarity-stars.rarity-5 { color: var(--accent); }
 .rarity-stars.rarity-4 { color: #b48ce0; }
